@@ -10,7 +10,7 @@
     web3.setProvider(new web3.providers.HttpProvider());
 
     // solidity source code
-    var source = "" + 
+    var source = "" +
     "contract test {\n" +
     "   function multiply(uint a) returns(uint d) {\n" +
     "       return a * 7;\n" +
@@ -36,14 +36,14 @@
     }];
 
     var myContract;
-
+    var address;
     function createExampleContract() {
         // hide create button
-        document.getElementById('create').style.visibility = 'hidden'; 
+        document.getElementById('create').style.visibility = 'hidden';
         document.getElementById('source').innerText = source;
 
         // create contract
-        var address = web3.eth.sendTransaction({data: web3.eth.compile.solidity(source)}),
+        address = web3.eth.sendTransaction({data: web3.eth.compile.solidity(source)}),
             Contract = web3.eth.contract(desc);
 
         myContract = new Contract(address);
@@ -57,13 +57,18 @@
         // call the contract
         var res = myContract.call().multiply(param);
         document.getElementById('result').innerText = res.toString(10);
+
+        web3.eth.filter({'address': address, 'toBlock':'latest'}).watch(function(res) {
+          console.log('@@@ addr filter')
+          console.log(res)
+        });
     }
 
 </script>
 </head>
 <body>
     <h1>contract</h1>
-    <div id="source"></div> 
+    <div id="source"></div>
     <div id='create'>
         <button type="button" onClick="createExampleContract();">create example contract</button>
     </div>
@@ -73,4 +78,3 @@
     <div id="result"></div>
 </body>
 </html>
-
